@@ -8,7 +8,7 @@ function Home({imageDetails, image}) {
             <main>
                 <div className="container">
                     <div className="row center">
-                        <div className="image container">
+                        <div className="image-container">
                             <div 
                                 className="thumbnail"
                                 ref={image}
