@@ -1,7 +1,7 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 //Components
 import ScrollForMore from "../components/scrollForMore";
-import {motion} from 'framer-motion'
+import {motion, useTransform, useViewportScroll} from 'framer-motion'
 //Ease
 
 const transition = {
@@ -9,18 +9,68 @@ const transition = {
   ease: [.6,0.01,-0.05, 0.9]
 }
 
+const firstName = {
+  animate: {
+    y: 0,
+    transition: {
+      delayChildren: .6,
+      staggerChildren: .20,
+      staggerDirection: -1,
+    }
+  }
+}
+
+const lastName = {
+  animate: {
+    y: 0,
+    transition: {
+      delayChildren: .6,
+      staggerChildren: .04,
+      staggerDirection: 1,
+    }
+  }
+}
+
+const letter = {
+  initial: {
+    y: 400,
+  },
+  animate: {
+    y: 0,
+    transition: {
+      duration: 1, ...transition
+    }
+  }
+}
+
 const Model = ({imageDetails}) => {
+
+  const {scrollYProgress} = useViewportScroll();
+  const scale = useTransform(scrollYProgress, [0,1], [1, 1.15]);
+
+  const [canScoll, setCanScroll] = useState(false);
+
+  useEffect(() => {
+    if(!canScoll){
+      document.querySelector('body').classList.add('no-scroll');
+    } else {
+      document.querySelector('body').classList.remove('no-scroll');
+    }
+  }, [canScoll]);
+
   return (
     <motion.div 
+      onAnimationComplete={() => setCanScroll(true)}
       initial="initial"
       animate="animate"
       exit="exit"
       className='single'>
-      <div className='container fluid'>
+      <div className='container'>
         <div className='row center top-row'>
           <div className='top'>
             <motion.div 
-              initial={{ opacity: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0, transition: {delay: 1.2}, ...transition }}
               className='details'>
               <div className='location'>
                 <span>28.538336</span>
@@ -28,25 +78,24 @@ const Model = ({imageDetails}) => {
               </div>
               <div className='mua'>MUA: @mylifeascrystall</div>
             </motion.div>
-            <motion.div 
-              initial={{ opacity: 0 }}
+            <motion.div
               className='model'>
-              <span className='first'>
-                <span>Y</span>
-                <span>a</span>
-                <span>s</span>
-                <span>m</span>
-                <span>e</span>
-                <span>e</span>
-                <span>n</span>
-              </span>
-              <span className='last'>
-                <span>T</span>
-                <span>a</span>
-                <span>r</span>
-                <span>i</span>
-                <span>q</span>
-              </span>
+              <motion.span variants={firstName} className='first'>
+                <motion.span variants={letter}>Y</motion.span>
+                <motion.span variants={letter}>a</motion.span>
+                <motion.span variants={letter}>s</motion.span>
+                <motion.span variants={letter}>m</motion.span>
+                <motion.span variants={letter}>e</motion.span>
+                <motion.span variants={letter}>e</motion.span>
+                <motion.span variants={letter}>n</motion.span>
+              </motion.span>
+              <motion.span variants={lastName} className='last'>
+                <motion.span variants={letter}>T</motion.span>
+                <motion.span variants={letter}>a</motion.span>
+                <motion.span variants={letter}>r</motion.span>
+                <motion.span variants={letter}>i</motion.span>
+                <motion.span variants={letter}>q</motion.span>
+              </motion.span>
             </motion.div>
           </div>
         </div>
@@ -58,7 +107,7 @@ const Model = ({imageDetails}) => {
                 animate={{ y: 0, width: '100%', height: window.innerWidth > 1440 ? 800 : 400, transition: {delay: .2, ...transition} }}
                 className='thumbnail-single'>
                 <div className='frame-single'>
-                  <motion.img initial={{ scale: 1.1 }} animate={{ y: window.innerWidth > 1440 ? -1000 : -600, transition: {delay: .2, ...transition} }} src={require("../images/yasmeen.webp")} alt='an image' />
+                  <motion.img style={{ scale: scale }} initial={{ scale: 1.1 }} animate={{ y: window.innerWidth > 1440 ? -1000 : -600, transition: {delay: .2, ...transition} }} src={require("../images/yasmeen.webp")} alt='an image' />
                 </div>
               </motion.div>
             </div>
